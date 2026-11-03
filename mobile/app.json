@@ -40,7 +40,9 @@
           "style": "light",
           "enforceContrast": false
         }
-      ]
+      ],
+      "expo-sqlite",
+      "expo-font"
     ]
   }
 }

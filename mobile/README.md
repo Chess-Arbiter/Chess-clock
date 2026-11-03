@@ -1,37 +1,33 @@
 # Chess Clock — mobile
 
-React Native (Expo) wrapper that renders the [web app](../web) inside a WebView.
-
-The web app is built and inlined into a single HTML string (`src/webApp.ts`, generated),
-so the app works fully offline and runs in **Expo Go** without a custom build.
+Native React Native (Expo) chess clock. It is fully self-contained: no WebView, no network
+access, and no dependency on the [web app](../web) — the two share only the design.
 
 ## Run
 
 ```bash
-cd web && npm i        # once, the web app is built from here
-cd ../mobile && npm i
-npm start              # rebuilds ../web, then starts Expo — scan the QR code with Expo Go
+npm i
+npm start              # starts Expo — scan the QR code with Expo Go
 ```
 
-`npm run bundle-web` regenerates `src/webApp.ts` manually after changing the web app.
+## Structure
 
-## Live reload against the web dev server
+- `App.tsx` — switches between the setup and clock screens; handles the system bars and keeps the screen awake
+- `src/screens/SetupScreen.tsx` — presets, custom times per player, "Increment after move" rule
+- `src/screens/ClockScreen.tsx` — the two timers and the restart / play / settings buttons
+- `src/useChessClock.ts` — game logic: countdown, moves, increments
+- `src/storage.ts` — saves the last settings on the device (`expo-sqlite/kv-store`)
 
-Run `npm run dev -- --host` in `web`, then start Expo with the LAN URL:
+## Checks
 
 ```bash
-EXPO_PUBLIC_WEB_URL=http://192.168.1.10:5173 npx expo start
+npm run typecheck
+npx expo-doctor
 ```
-
-## Notes
-
-- The screen is kept awake while the app is open (`expo-keep-awake`).
-- Saved time controls persist via the WebView's `localStorage`.
 
 ## Deploy to Google Play
 
 The app is linked to the EAS project `@chess_arbiter/chess-clock` (package `com.chess_arbiter.chessclock`).
-The web app is rebuilt on the EAS server by the `eas-build-post-install` hook, so `src/webApp.ts` doesn't need to be committed.
 
 ```bash
 npm run build:android    # production .aab on EAS; versionCode is auto-incremented

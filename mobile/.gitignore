@@ -40,5 +40,3 @@ yarn-error.*
 /ios
 /android
 
-# generated from ../web by scripts/bundle-web.mjs
-/src/webApp.ts

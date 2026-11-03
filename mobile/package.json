@@ -3,29 +3,26 @@
   "version": "1.0.0",
   "main": "index.ts",
   "dependencies": {
+    "@expo/vector-icons": "^15.0.2",
     "expo": "~57.0.31",
+    "expo-font": "~57.0.4",
     "expo-keep-awake": "~57.0.2",
     "expo-navigation-bar": "~57.0.3",
+    "expo-sqlite": "~57.0.4",
     "expo-status-bar": "~57.0.1",
     "react": "19.2.3",
     "react-native": "0.86.3",
-    "react-native-safe-area-context": "~5.7.0",
-    "react-native-webview": "13.16.1"
+    "react-native-safe-area-context": "~5.7.0"
   },
   "devDependencies": {
     "@types/react": "~19.2.2",
     "typescript": "~6.0.3"
   },
   "scripts": {
-    "bundle-web": "node scripts/bundle-web.mjs",
-    "prestart": "npm run bundle-web",
     "start": "expo start",
-    "preandroid": "npm run bundle-web",
     "android": "expo run:android",
-    "preios": "npm run bundle-web",
     "ios": "expo run:ios",
     "typecheck": "tsc --noEmit",
-    "eas-build-post-install": "npm --prefix ../web ci && npm run bundle-web",
     "build:android": "npx eas-cli@latest build --platform android --profile production",
     "submit:android": "npx eas-cli@latest submit --platform android --profile production --latest"
   },

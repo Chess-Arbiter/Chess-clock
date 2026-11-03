@@ -1,46 +1,52 @@
+import { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { useKeepAwake } from "expo-keep-awake";
 import { NavigationBar } from "expo-navigation-bar";
-import { StyleSheet, View } from "react-native";
+import { BackHandler, StyleSheet, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
-import { WebView } from "react-native-webview";
-import { webAppHtml } from "./src/webApp";
-
-const BACKGROUND = "#f1f3fa";
-const PRIMARY = "#1a1146";
-
-// Set EXPO_PUBLIC_WEB_URL (e.g. http://192.168.1.10:5173) to load the Vite dev server instead of the bundled build
-const devUrl = process.env.EXPO_PUBLIC_WEB_URL;
-
-// A stable origin keeps localStorage (saved time controls) between launches
-const source = devUrl ? { uri: devUrl } : { html: webAppHtml, baseUrl: "https://chess-clock-amber.vercel.app" };
-
-// The native layout already keeps the page clear of the system bars; this tells the page not to add that space again
-const markInApp = `document.documentElement.classList.add("in-app"); true;`;
+import ClockScreen from "./src/screens/ClockScreen";
+import SetupScreen from "./src/screens/SetupScreen";
+import { loadSettings, saveSettings } from "./src/storage";
+import { colors } from "./src/theme";
+import { GameSettings } from "./src/types";
 
 function Screen() {
   const { bottom } = useSafeAreaInsets();
+  const [settings, setSettings] = useState<GameSettings>(loadSettings);
+  const [isSetupOpen, setIsSetupOpen] = useState(true);
+
+  // Android back button on the clock returns to the settings instead of closing the app
+  useEffect(() => {
+    if (isSetupOpen) {
+      return;
+    }
+
+    const subscription = BackHandler.addEventListener("hardwareBackPress", () => {
+      setIsSetupOpen(true);
+
+      return true;
+    });
+
+    return () => subscription.remove();
+  }, [isSetupOpen]);
+
+  const startGame = (next: GameSettings) => {
+    saveSettings(next);
+    setSettings(next);
+    setIsSetupOpen(false);
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
       <StatusBar style="dark" />
-      {/* Light buttons on a dark strip stay readable whatever the page shows above them */}
+      {/* Light buttons on a dark strip stay readable whatever the screen shows above them */}
       <NavigationBar style="light" />
-      <WebView
-        style={styles.webview}
-        source={source}
-        injectedJavaScriptBeforeContentLoaded={markInApp}
-        injectedJavaScript={markInApp}
-        originWhitelist={["*"]}
-        domStorageEnabled
-        bounces={false}
-        overScrollMode="never"
-        textZoom={100}
-        setBuiltInZoomControls={false}
-        allowsLinkPreview={false}
-        contentInsetAdjustmentBehavior="never"
-      />
-      {/* Sits behind the system navigation bar so the page never goes under its buttons */}
+      {isSetupOpen ? (
+        <SetupScreen initialSettings={settings} onStart={startGame} />
+      ) : (
+        <ClockScreen settings={settings} onOpenSettings={() => setIsSetupOpen(true)} />
+      )}
+      {/* Sits behind the system navigation bar so the screen never goes under its buttons */}
       <View style={[styles.navigationBarStrip, { height: bottom }]} />
     </SafeAreaView>
   );
@@ -60,13 +66,9 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: BACKGROUND,
-  },
-  webview: {
-    flex: 1,
-    backgroundColor: BACKGROUND,
+    backgroundColor: colors.surface,
   },
   navigationBarStrip: {
-    backgroundColor: PRIMARY,
+    backgroundColor: colors.primary,
   },
 });
