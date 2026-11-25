@@ -1,4 +1,4 @@
-# Chess Clock — mobile
+# Chess Clock
 
 Native React Native (Expo) chess clock for Android. It works fully offline: no WebView and no network access.
 
