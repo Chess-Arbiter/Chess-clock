@@ -1,7 +1,8 @@
 # Chess Clock — mobile
 
-Native React Native (Expo) chess clock. It is fully self-contained: no WebView, no network
-access, and no dependency on the [web app](../web) — the two share only the design.
+Native React Native (Expo) chess clock for Android. It works fully offline: no WebView and no network access.
+
+Privacy policy: https://chessarbiter.info/privacy/chess-clock
 
 ## Run
 

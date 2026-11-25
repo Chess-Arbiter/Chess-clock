@@ -14,7 +14,6 @@ function read<T>(key: string, fallback: T): T {
   }
 }
 
-// Same keys as the web version
 export function loadSettings(): GameSettings {
   return {
     white: read("player1", emptyTime),
